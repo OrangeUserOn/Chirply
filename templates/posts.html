@@ -41,24 +41,28 @@
 
 		{% for post in posts %}
 			<div class="card mb-3 shadow-sm">
-			<div class="card-body">
-					<p class="card-text">{{ post.content }}</p>
+                <div class="card-body">
+                    <p class="card-text">{{ post.content }}</p>
 					<p class="text-muted mb-1">
 					by <a href="{{ url_for('profile', user_id=post.author_id) }}">{{ post.author.username }}</a>
 					</p>
-					<p class="mb-2 likes">Likes: {{ post.likes | length }}</p>
-
-					<form action="{{ url_for('like', post_id=post.post_id) }}" method="POST" class="likes">
-					<button type="submit" class="btn btn-outline-primary">
-					{% if session.user_id in post.likes_as_flat_user_id_list() %}
-						Unlike
-					{% else %}
-						Like
-					{% endif %}
-					</button>
-					</form>
-			</div>
-			</div>
+                    <p class="text-muted mb-1">Likes: {{ post.likes | length }}</p>
+    
+				<div class="d-flex justify-content-end">
+                    <form action="{{ url_for('like', post_id=post.post_id) }}" method="POST" class="likes">
+                        <button type="submit" class="btn btn-outline-primary">
+                        {% if session.user_id in post.likes_as_flat_user_id_list() %}
+                            Unlike
+                        {% else %}
+                            Like
+                        {% endif %}
+                        </button>
+                    </form>
+					</div>
+                </div>
+            </div>
+			
+			
 		{% endfor %}
 
 	</div>
