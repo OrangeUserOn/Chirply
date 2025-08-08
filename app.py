@@ -99,16 +99,22 @@ def login():
 	if request.method == "POST":
 		username = request.form.get("username")
 		password = request.form.get("password")
-		userpassword = Users.query.filter_by(username=username).first().password
-		password_hashed = bcrypt.hashpw(password.encode('utf-8'), userpassword)
-		user = Users.query.filter_by(username=username, password=password_hashed).first()
-
+        
+		user = Users.query.filter_by(username=username).first()
 		if user:
-			session["user_id"] = user.user_id
-			session["user_name"] = user.username
-			return redirect(url_for("home"))
+			password_data = user.password
+			password_hashed = bcrypt.hashpw(password.encode('utf-8'), password_data)
+			user = Users.query.filter_by(username=username, password=password_hashed).first()
+        
+			if user:
+				session["user_id"] = user.user_id
+				session["user_name"] = user.username
+				return redirect(url_for("home"))
+			else:
+				return "Invalid credentials"
 		else:
 			return "Invalid credentials"
+
 
 	return render_template("login.html")
 
