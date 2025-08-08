@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ user.username }}'s Profile</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        .main-part {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .likes {
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container py-4 main-part">
+	<h1 class="display-3">Chirply</h1>
+
+        {% if session.user_id %}
+            <div class="alert alert-info text-center" role="alert">
+                You are logged in as <strong>{{ session.user_name }}</strong>
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Back to Home</a>
+
+            {% if session.user_id %}
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Log out</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary">Log in</a>
+                <a href="{{ url_for('create_profile') }}" class="btn btn-outline-primary">Create Profile</a>
+            {% endif %}
+        </div>
+
+        <h1 class="mb-4">{{ user.username }}'s Profile</h1>
+
+        <h3 class="mb-3">Posts:</h3>
+
+        {% for post in posts %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <p class="card-text">{{ post.content }}</p>
+                    <p class="text-muted mb-1">Likes: {{ post.likes | length }}</p>
+    
+				<div class="d-flex justify-content-end">
+                    <form action="{{ url_for('like', post_id=post.post_id) }}" method="POST" class="likes">
+                        <button type="submit" class="btn btn-outline-primary">
+                        {% if session.user_id in post.likes_as_flat_user_id_list() %}
+                            Unlike
+                        {% else %}
+                            Like
+                        {% endif %}
+                        </button>
+                    </form>
+					</div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">No posts found.</p>
+        {% endfor %}
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Posts</title>
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<style>
+	.main-part {
+		max-width: 500px;
+		margin: 0 auto;
+	}
+	
+	.likes {
+		margin-left: auto;
+	}
+	</style>
+</head>
+<body class="bg-light">
+
+	<div class="container py-4 main-part">
+	<h1 class="display-3">Chirply</h1>
+	
+
+		{% if session.user_id %}
+			<div class="alert alert-info text-center" role="alert">
+				You are logged in as <strong>{{ session.user_name }}</strong>
+			</div>
+		{% endif %}
+
+		<div class="d-flex justify-content-between mb-3">
+			{% if session.user_id %}
+				<a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Log out</a>
+			{% else %}
+				<a href="{{ url_for('login') }}" class="btn btn-outline-primary">Log in</a>
+				<a href="{{ url_for('create_profile') }}" class="btn btn-outline-primary">Create Profile</a>
+			{% endif %}
+
+			<a href="{{ url_for('create_post') }}" class="btn btn-primary">Create New Post</a>
+		</div>
+
+		<h1 class="mb-4">All Posts</h1>
+
+		{% for post in posts %}
+			<div class="card mb-3 shadow-sm">
+			<div class="card-body">
+					<p class="card-text">{{ post.content }}</p>
+					<p class="text-muted mb-1">
+					by <a href="{{ url_for('profile', user_id=post.author_id) }}">{{ post.author.username }}</a>
+					</p>
+					<p class="mb-2 likes">Likes: {{ post.likes | length }}</p>
+
+					<form action="{{ url_for('like', post_id=post.post_id) }}" method="POST" class="likes">
+					<button type="submit" class="btn btn-outline-primary">
+					{% if session.user_id in post.likes_as_flat_user_id_list() %}
+						Unlike
+					{% else %}
+						Like
+					{% endif %}
+					</button>
+					</form>
+			</div>
+			</div>
+		{% endfor %}
+
+	</div>
+
+</body>
+</html>
